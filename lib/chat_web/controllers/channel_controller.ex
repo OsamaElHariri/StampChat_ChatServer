@@ -41,9 +41,13 @@ defmodule ChatWeb.ChannelController do
     })
   end
 
-  def get_events(conn, %{"channel_id" => channel_id}) do
+  def get_events(conn, %{"channel_id" => channel_id, "last_message_id" => last_message_id}) do
+    {is_last_message, messages} =
+      ChatWeb.MessageService.get_channel_messages(channel_id, last_message_id)
+
     render(conn, "messages_and_members_data.json",
-      messages: ChatWeb.MessageService.get_channel_messages(channel_id),
+      is_last_message: is_last_message,
+      messages: messages,
       members: ChatWeb.ChannelService.get_members(channel_id)
     )
   end

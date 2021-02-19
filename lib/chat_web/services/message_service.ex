@@ -2,14 +2,30 @@ defmodule ChatWeb.MessageService do
   import Ecto.Query
   alias Chat.{Repo, Channel, Member, Message}
 
-  def get_channel_messages(channel_id) do
-    Repo.all(
-      from msg in Message,
-        left_join: s in assoc(msg, :stamps),
-        where: msg.channel_id == type(^channel_id, :integer),
-        order_by: msg.inserted_at,
-        preload: [stamps: s]
-    )
+  def get_channel_messages(channel_id, last_message_id) do
+    limit = 60
+
+    query =
+      if last_message_id == nil || last_message_id == "" do
+        from(msg in Message)
+      else
+        from msg in Message,
+          where: msg.id < type(^last_message_id, :integer)
+      end
+
+    messages =
+      Repo.all(
+        from msg in query,
+          left_join: s in assoc(msg, :stamps),
+          where: msg.channel_id == type(^channel_id, :integer),
+          limit: type(^limit, :integer),
+          order_by: [desc: msg.inserted_at],
+          preload: [stamps: s]
+      ) || []
+
+    is_last_message = Enum.count(messages) == 0
+
+    {is_last_message, messages}
   end
 
   def add_message(channel_topic, user_id, body) do

@@ -85,8 +85,6 @@ defmodule ChatWeb.ChannelService do
   end
 
   def join_channel(user_id, topic) do
-    IO.puts("JOINING")
-
     user =
       Repo.one(
         from u in User,

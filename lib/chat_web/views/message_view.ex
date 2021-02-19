@@ -1,8 +1,13 @@
 defmodule ChatWeb.MessageView do
   use ChatWeb, :view
 
-  def render("messages_and_members.json", %{messages: messages, members: members}) do
+  def render("messages_and_members.json", %{
+        messages: messages,
+        members: members,
+        is_last_message: is_last_message
+      }) do
     %{
+      is_last_message: is_last_message,
       messages: render_many(messages, ChatWeb.MessageView, "message.json"),
       members: render_many(members, ChatWeb.MemberView, "member.json")
     }
