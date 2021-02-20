@@ -23,7 +23,17 @@ defmodule ChatWeb.MessageService do
           preload: [stamps: s]
       ) || []
 
-    is_last_message = Enum.count(messages) == 0
+    first_channel_message =
+      Repo.one(
+        from msg in Message,
+          where: msg.channel_id == type(^channel_id, :integer),
+          limit: 1,
+          order_by: msg.inserted_at
+      )
+
+    is_last_message =
+      !!(first_channel_message && List.last(messages) &&
+           first_channel_message.id == List.last(messages).id)
 
     {is_last_message, messages}
   end
