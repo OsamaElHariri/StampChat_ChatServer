@@ -1,5 +1,7 @@
 port: "4000"
 db_url: ecto://some_user:password@192.168.2.140:5431/stamp_chat
+
+private_key: "super_secret_key!"
 secret_key_base: N01DRQrp0vNotActuallyASecret!uP5KIDFwuWJRzrRT4DjG3637DJ34xpVPnWZwnW+pFw
 
 notification_server_port: "3001"
