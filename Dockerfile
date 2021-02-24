@@ -1,25 +1,17 @@
 # ---- Build Stage ----
-FROM erlang:21 AS app_builder
+FROM elixir:alpine AS app_builder
 
 # Set environment variables for building the application
 ENV MIX_ENV=prod \
-  LANG=C.UTF-8
+    TEST=1 \
+    LANG=C.UTF-8
 
-# Fetch the latest version of Elixir (once the 1.9 docker image is available you won't have to do this)
-RUN set -xe \
-  && ELIXIR_DOWNLOAD_URL="https://github.com/elixir-lang/elixir/archive/v1.9.0-rc.0.tar.gz" \
-  && ELIXIR_DOWNLOAD_SHA256="fa019ba18556f53bfb77840b0970afd116517764251704b55e419becb0b384cf" \
-  && curl -fSL -o elixir-src.tar.gz $ELIXIR_DOWNLOAD_URL \
-  && echo "$ELIXIR_DOWNLOAD_SHA256  elixir-src.tar.gz" | sha256sum -c - \
-  && mkdir -p /usr/local/src/elixir \
-  && tar -xzC /usr/local/src/elixir --strip-components=1 -f elixir-src.tar.gz \
-  && rm elixir-src.tar.gz \
-  && cd /usr/local/src/elixir \
-  && make install clean
+RUN apk add --update git && \
+    rm -rf /var/cache/apk/*
 
 # Install hex and rebar
 RUN mix local.hex --force && \
-  mix local.rebar --force
+    mix local.rebar --force
 
 # Create the application build directory
 RUN mkdir /app
@@ -38,16 +30,20 @@ RUN mix deps.compile
 RUN mix release
 
 # ---- Application Stage ----
-FROM debian:stretch AS app
+FROM alpine AS app
 
 ENV LANG=C.UTF-8
 
 # Install openssl
-RUN apt-get update && apt-get install -y openssl
+RUN apk add --update openssl ncurses-libs postgresql-client && \
+    rm -rf /var/cache/apk/*
 
-# Copy over the build artifact from the previous step
+# Copy over the build artifact from the previous step and create a non root user
+RUN adduser -D -h /home/app app
 WORKDIR /home/app
 COPY --from=app_builder /app/_build .
+RUN chown -R app: ./prod
+USER app
 
 # Run the Phoenix app
 CMD ["./prod/rel/chat/bin/chat", "start"]
