@@ -19,6 +19,8 @@ defmodule Chat.Application do
       "http://" <> env.notification_host <> ":" <> env.notification_port
     )
 
+    Application.put_env(:auth_service, :private_key, env.private_key)
+
     opts = [strategy: :one_for_one, name: Chat.Supervisor]
     Supervisor.start_link(children, opts)
   end

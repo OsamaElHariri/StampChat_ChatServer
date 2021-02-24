@@ -3,7 +3,9 @@ defmodule ChatWeb.AuthService do
   alias Chat.{Repo, User}
 
   def verify(token) do
-    signer = Joken.Signer.create("HS256", "super_secret_key!")
+    private_key = Application.get_env(:auth_service, :private_key)
+
+    signer = Joken.Signer.create("HS256", private_key)
     verification = Joken.verify_and_validate(Joken.Config.default_claims(), token, signer)
 
     case verification do

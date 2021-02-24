@@ -16,6 +16,7 @@ defmodule ChatWeb.EnvironmentService do
             bindings: [
               db_url: "DB_URL",
               port: "PORT",
+              private_key: "PRIVATE_KEY",
               secret_key_base: "SECRET_KEY_BASE",
               notification_port: "STAMP_CHAT_NOTIFICATIONS_SERVICE_PORT",
               notification_host: "STAMP_CHAT_NOTIFICATIONS_SERVICE_HOST"
@@ -28,6 +29,7 @@ defmodule ChatWeb.EnvironmentService do
             bindings: [
               db_url: "db_url",
               port: "port",
+              private_key: "private_key",
               secret_key_base: "secret_key_base",
               notification_port: "notification_server_port",
               notification_host: "notification_server_host"
