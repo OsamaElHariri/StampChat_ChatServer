@@ -50,6 +50,6 @@ defmodule ChatWeb.Endpoint do
        :inet6,
        port: String.to_integer(env.port || 4000)
      ])
-     |> Keyword.put(:secret_key_base, env.secret_key_base)}
+     |> Keyword.put(:secret_key_base, String.trim(env.secret_key_base))}
   end
 end
