@@ -84,7 +84,7 @@ defmodule ChatWeb.MessageService do
       )
       |> Enum.map(fn user -> user.identity end)
 
-    url = Application.get_env(:notification_server, :url) <> "/notify"
+    url = Application.get_env(:notification_server, :url) <> "/internal/notify"
 
     body =
       Jason.encode!(%{

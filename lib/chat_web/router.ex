@@ -13,7 +13,7 @@ defmodule ChatWeb.Router do
     pipe_through :api
 
     get "/test", ChannelController, :test
-    post "/users", ChannelController, :create_user
+    post "/internal/users", ChannelController, :create_user
   end
 
   scope "/", ChatWeb do
