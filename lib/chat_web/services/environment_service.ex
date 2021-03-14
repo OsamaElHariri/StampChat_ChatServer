@@ -14,6 +14,7 @@ defmodule ChatWeb.EnvironmentService do
         "prod" ->
           %Vapor.Provider.Env{
             bindings: [
+              {:env, "MIX_ENV"},
               db_url: "DB_URL",
               port: "PORT",
               private_key: "PRIVATE_KEY",
@@ -27,6 +28,7 @@ defmodule ChatWeb.EnvironmentService do
           %Vapor.Provider.File{
             path: "config.yaml",
             bindings: [
+              {:env, "env", default: "dev"},
               db_url: "db_url",
               port: "port",
               private_key: "private_key",
@@ -37,6 +39,6 @@ defmodule ChatWeb.EnvironmentService do
           }
       end
 
-      Vapor.load!([provider])
+    Vapor.load!([provider])
   end
 end
